@@ -3,15 +3,14 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- * Film.
- */
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
-public class Film {
+public class User {
     Long id;
+    String email;
+    String login;
     String name;
-    String description;
-    String releaseDate;
-    Integer duration;
+    String birthday;
 }
