@@ -14,12 +14,12 @@ public class UserControllerTest {
     UserController userController;
 
     @BeforeEach
-    void createUserController(){
+    void createUserController() {
         userController = new UserController();
     }
 
     @Test
-    void shouldReturn2ThenAdd2Users(){
+    void shouldReturn2ThenAdd2Users() {
         userController.addUser(new User(null, "1@email", "login1", "name1", "1895-12-28"));
         userController.addUser(new User(null, "2@email", "login2", "name2", "1995-12-28"));
 
@@ -28,19 +28,19 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndUserIsNull(){
+    void shouldThrowValidationExceptionThenAddNewUserAndUserIsNull() {
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(null), "Не выброшено исключение" +
                 "при user равном null");
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndUserIsNull(){
+    void shouldThrowValidationExceptionThenUpdateUserAndUserIsNull() {
         Assertions.assertThrows(ValidationException.class, () -> userController.updateUser(null), "Не выброшено исключение" +
                 "при user равном null");
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndEmailDoesNotContainDog(){
+    void shouldThrowValidationExceptionThenAddNewUserAndEmailDoesNotContainDog() {
         User user = new User(null, "email", "login1", "name1", "1895-12-28");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
@@ -48,7 +48,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndLoginEqualNull(){
+    void shouldThrowValidationExceptionThenAddNewUserAndLoginEqualNull() {
         User user = new User(null, "email@", null, "name", "1895-12-28");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
@@ -56,7 +56,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndLoginContainSpace (){
+    void shouldThrowValidationExceptionThenAddNewUserAndLoginContainSpace() {
         User user = new User(null, "email@", "login 1", "name", "1895-12-28");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
@@ -64,7 +64,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndLoginConsistSpace (){
+    void shouldThrowValidationExceptionThenAddNewUserAndLoginConsistSpace() {
         User user = new User(null, "email@", "   ", "name", "1895-12-28");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
@@ -72,7 +72,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndBirthdayAfterNow (){
+    void shouldThrowValidationExceptionThenAddNewUserAndBirthdayAfterNow() {
         User user = new User(null, "email@", "   ", "name", "2095-12-28");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
@@ -80,7 +80,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndEmailDoesNotContainDog(){
+    void shouldThrowValidationExceptionThenUpdateUserAndEmailDoesNotContainDog() {
         User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
         user.setEmail("NewEmail");
 
@@ -89,7 +89,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndLoginEqualNull(){
+    void shouldThrowValidationExceptionThenUpdateUserAndLoginEqualNull() {
         User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
         user.setLogin(null);
 
@@ -98,7 +98,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionUpdateUserAndLoginContainSpace (){
+    void shouldThrowValidationExceptionUpdateUserAndLoginContainSpace() {
         User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
         user.setLogin("login 1");
 
@@ -107,7 +107,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndLoginConsistSpace (){
+    void shouldThrowValidationExceptionThenUpdateUserAndLoginConsistSpace() {
         User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
         user.setLogin("   ");
 
@@ -116,7 +116,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndBirthdayAfterNow (){
+    void shouldThrowValidationExceptionThenUpdateUserAndBirthdayAfterNow() {
         User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
         user.setBirthday("2095-12-28");
 
@@ -125,7 +125,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldEqualThenNameIsNull(){
+    void shouldEqualThenNameIsNull() {
         User user = userController.addUser(new User(null, "email@", "login", null, "1895-12-28"));
 
         Assertions.assertEquals(user.getLogin(), user.getName(), "имя не эквивалентно логину");

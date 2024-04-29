@@ -14,32 +14,32 @@ public class FilmControllerTest {
     FilmController filmController;
 
     @BeforeEach
-    void createFilmController(){
+    void createFilmController() {
        filmController = new FilmController();
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddFilmAndFilmEqualNull(){
+    void shouldThrowValidationExceptionThenAddFilmAndFilmEqualNull() {
         Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(null), "не выброшено исключение " +
                 "на описание длинной 201 символ");
     }
 
     @Test
-    void shouldReturnTrueThenAddNewFilm(){
+    void shouldReturnTrueThenAddNewFilm() {
         Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
 
         Assertions.assertTrue(filmController.getAllFilms().contains(film), "Фильм не добавлен в приложение");
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewFilmAndNameIsBlank(){
+    void shouldThrowValidationExceptionThenAddNewFilmAndNameIsBlank() {
         Film film = new Film(null, "", "description", "1895-12-28", 40);
 
         Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(film), "Не выброшено исключение на пустое имя");
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewFilmAndDescription201Characters(){
+    void shouldThrowValidationExceptionThenAddNewFilmAndDescription201Characters() {
         String description = "В 2296 году, более 200 лет спустя после ядерной войны, потомки привилегированных и богатых" +
                 " живут в автономных благоустроенных бункерах, а остальное человечество выживает в жёстких условиях. Умница и...";
         Film film = new Film(null, "Fallout", description, "1895-12-28", 40);
@@ -49,7 +49,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewFilmAndReleaseDate1895_12_27(){
+    void shouldThrowValidationExceptionThenAddNewFilmAndReleaseDate1895_12_27() {
         Film film = new Film(null, "name", "description", "1895-12-27", 40);
 
         Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(film), "Не выброшено исключение" +
@@ -57,7 +57,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewFilmAndDurationIsNegative(){
+    void shouldThrowValidationExceptionThenAddNewFilmAndDurationIsNegative() {
         Film film = new Film(null, "name", "description", "1895-12-28", -1);
 
         Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(film), "Не выброшено" +
@@ -65,14 +65,13 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndFilmEqualNull(){
+    void shouldThrowValidationExceptionThenUpdateFilmAndFilmEqualNull() {
         Assertions.assertThrows(ValidationException.class, () -> filmController.updateFilm(null), "не выброшено исключение " +
                 "на описание длинной 201 символ");
     }
 
     @Test
-    void shouldReturnTrueThenUpdateFilm(){
-        //FilmController filmController = new FilmController();
+    void shouldReturnTrueThenUpdateFilm() {
         Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
         film.setName("NewName");
         filmController.updateFilm(film);
@@ -81,7 +80,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndNameIsBlank(){
+    void shouldThrowValidationExceptionThenUpdateFilmAndNameIsBlank() {
         Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
         film.setName("");
 
@@ -89,7 +88,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndDescription201Characters(){
+    void shouldThrowValidationExceptionThenUpdateFilmAndDescription201Characters() {
         Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
         String description = "В 2296 году, более 200 лет спустя после ядерной войны, потомки привилегированных и богатых" +
                 " живут в автономных благоустроенных бункерах, а остальное человечество выживает в жёстких условиях. Умница и...";
@@ -100,7 +99,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndReleaseDate1895_12_27(){
+    void shouldThrowValidationExceptionThenUpdateFilmAndReleaseDate1895_12_27() {
         Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
         film.setReleaseDate("1895-12-27");
 
@@ -109,7 +108,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndDurationIsNegative(){
+    void shouldThrowValidationExceptionThenUpdateFilmAndDurationIsNegative() {
         Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
         film.setDuration(-1);
 
@@ -118,7 +117,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldReturn2ThenAdd2Films(){
+    void shouldReturn2ThenAdd2Films() {
         filmController.addFilm(new Film(null, "name1", "description1", "1895-12-28", 40));
         filmController.addFilm(new Film(null, "name2", "description2", "1895-12-28", 50));
 
