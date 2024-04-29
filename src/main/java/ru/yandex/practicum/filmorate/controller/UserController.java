@@ -44,14 +44,14 @@ public class UserController extends BaseController<User> {
         return users.get(user.getId());
     }
 
-    private void checkUser(User user){
+    private void checkUser(User user) {
         if (user == null) {
             throw new ValidationException("user equal null");
-        } else if (!user.getEmail().contains("@")){
+        } else if (!user.getEmail().contains("@")) {
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         } else if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().trim().contains(" ") || user.getLogin().isBlank()) {
             throw new ValidationException("Логин не может быть пустым и содержать пробел");
-        }  else if (Instant.parse(user.getBirthday() + "T00:00:00Z").isAfter(Instant.now())){
+        }  else if (Instant.parse(user.getBirthday() + "T00:00:00Z").isAfter(Instant.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
         if (user.getName() == null) {
