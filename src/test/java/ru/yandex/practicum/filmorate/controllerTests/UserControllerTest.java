@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -40,79 +40,11 @@ public class UserControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndEmailDoesNotContainDog() {
-        User user = new User(null, "email", "login1", "name1", "1895-12-28");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
-                "при отсутствии @ в почте");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndLoginEqualNull() {
-        User user = new User(null, "email@", null, "name", "1895-12-28");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
-                "при отсутствии значения в логине");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndLoginContainSpace() {
-        User user = new User(null, "email@", "login 1", "name", "1895-12-28");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
-                "при наличии пробела в логине");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenAddNewUserAndLoginConsistSpace() {
-        User user = new User(null, "email@", "   ", "name", "1895-12-28");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
-                "при логине состоящем из пробелов");
-    }
-
-    @Test
     void shouldThrowValidationExceptionThenAddNewUserAndBirthdayAfterNow() {
         User user = new User(null, "email@", "   ", "name", "2095-12-28");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.addUser(user), "Не выброшено исключение" +
                 "при при дате дня рождения позже текущей");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndEmailDoesNotContainDog() {
-        User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
-        user.setEmail("NewEmail");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.updateUser(user), "Не выброшено исключение" +
-                "при отсутствии @ в почте");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndLoginEqualNull() {
-        User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
-        user.setLogin(null);
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.updateUser(user), "Не выброшено исключение" +
-                "при отсутствии значения в логине");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionUpdateUserAndLoginContainSpace() {
-        User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
-        user.setLogin("login 1");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.updateUser(user), "Не выброшено исключение" +
-                "при наличии пробела в логине");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenUpdateUserAndLoginConsistSpace() {
-        User user = userController.addUser(new User(null, "email@", "login", "name", "1895-12-28"));
-        user.setLogin("   ");
-
-        Assertions.assertThrows(ValidationException.class, () -> userController.updateUser(user), "Не выброшено исключение" +
-                "при логине состоящем из пробелов");
     }
 
     @Test

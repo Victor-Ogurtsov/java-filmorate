@@ -1,8 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import java.time.Instant;
 import java.util.Collection;
@@ -23,8 +24,9 @@ public class UserController extends BaseController<User> {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         checkUser(user);
+        if (user.getName() == null) {setUserName(user);}
         user.setId(getNextId(users));
         log.info("Добавлен пользователь с id={}", user.getId());
         users.put(user.getId(), user);
@@ -32,13 +34,14 @@ public class UserController extends BaseController<User> {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@Valid  @RequestBody User user) {
         checkUser(user);
         if (user.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         } else if (!users.containsKey(user.getId())) {
             throw new ValidationException("user c id=" + user.getId() + " не найден");
         }
+        if (user.getName() == null) {setUserName(user);}
         log.info("Изменен пользователь с id={}", user.getId());
         users.put(user.getId(), user);
         return users.get(user.getId());
@@ -47,19 +50,12 @@ public class UserController extends BaseController<User> {
     private void checkUser(User user) {
         if (user == null) {
             throw new ValidationException("user equal null");
-        } else if (!user.getEmail().contains("@")) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-        } else if (user.getLogin() == null || user.getLogin().isEmpty() || user.getLogin().trim().contains(" ") || user.getLogin().isBlank()) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробел");
-        }  else if (Instant.parse(user.getBirthday() + "T00:00:00Z").isAfter(Instant.now())) {
+        } else if (Instant.parse(user.getBirthday() + "T00:00:00Z").isAfter(Instant.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
         }
     }
 
-
-
-
+    private void setUserName(User user) {
+            user.setName(user.getLogin());
+    }
 }

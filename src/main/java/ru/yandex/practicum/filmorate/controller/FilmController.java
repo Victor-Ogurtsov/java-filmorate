@@ -1,8 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.Instant;
 import java.util.Collection;
@@ -23,7 +24,7 @@ public class FilmController extends BaseController<Film> {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         checkFilm(film);
         film.setId(getNextId(films));
         log.info("Добавлен фильм с id={}", film.getId());
@@ -32,7 +33,7 @@ public class FilmController extends BaseController<Film> {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         checkFilm(film);
         if (film.getId() == null) {
             throw new ValidationException("Id должен быть указан");
@@ -47,14 +48,10 @@ public class FilmController extends BaseController<Film> {
     public void checkFilm(Film film) {
         if (film == null) {
             throw new ValidationException("film equal null");
-        } else if (film.getName() == null || film.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустым");
         } else if (film.getDescription().length() > 200) {
             throw new ValidationException("Максимальная длина описания — 200 символов");
         } else if (Instant.parse(film.getReleaseDate() + "T00:00:00Z").isBefore(Instant.parse("1895-12-28T00:00:00Z"))) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        } else if (film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
     }
 }

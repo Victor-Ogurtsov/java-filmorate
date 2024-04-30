@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -32,13 +32,6 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewFilmAndNameIsBlank() {
-        Film film = new Film(null, "", "description", "1895-12-28", 40);
-
-        Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(film), "Не выброшено исключение на пустое имя");
-    }
-
-    @Test
     void shouldThrowValidationExceptionThenAddNewFilmAndDescription201Characters() {
         String description = "В 2296 году, более 200 лет спустя после ядерной войны, потомки привилегированных и богатых" +
                 " живут в автономных благоустроенных бункерах, а остальное человечество выживает в жёстких условиях. Умница и...";
@@ -57,14 +50,6 @@ public class FilmControllerTest {
     }
 
     @Test
-    void shouldThrowValidationExceptionThenAddNewFilmAndDurationIsNegative() {
-        Film film = new Film(null, "name", "description", "1895-12-28", -1);
-
-        Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(film), "Не выброшено" +
-                " при отрицательной продолжительности");
-    }
-
-    @Test
     void shouldThrowValidationExceptionThenUpdateFilmAndFilmEqualNull() {
         Assertions.assertThrows(ValidationException.class, () -> filmController.updateFilm(null), "не выброшено исключение " +
                 "на описание длинной 201 символ");
@@ -77,14 +62,6 @@ public class FilmControllerTest {
         filmController.updateFilm(film);
 
         Assertions.assertTrue(filmController.getAllFilms().contains(film), "Фильм не добавлен в приложение");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndNameIsBlank() {
-        Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
-        film.setName("");
-
-        Assertions.assertThrows(ValidationException.class, () -> filmController.updateFilm(film), "Не выброшено исключение на пустое имя");
     }
 
     @Test
@@ -105,15 +82,6 @@ public class FilmControllerTest {
 
         Assertions.assertThrows(ValidationException.class, () -> filmController.updateFilm(film), "Не выброшено исключение" +
                 " при дате релиза 1895-12-27");
-    }
-
-    @Test
-    void shouldThrowValidationExceptionThenUpdateFilmAndDurationIsNegative() {
-        Film film = filmController.addFilm(new Film(null, "name", "description", "1895-12-28", 40));
-        film.setDuration(-1);
-
-        Assertions.assertThrows(ValidationException.class, () -> filmController.updateFilm(film), "Не выброшено" +
-                " при отрицательной продолжительности");
     }
 
     @Test
