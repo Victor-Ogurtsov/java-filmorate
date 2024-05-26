@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 public class User {
@@ -15,4 +17,5 @@ public class User {
     private String login;
     private String name;
     private String birthday;
+    private Set<Long> friends;
 }
