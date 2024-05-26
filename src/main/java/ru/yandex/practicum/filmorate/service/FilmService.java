@@ -50,7 +50,7 @@ public class FilmService {
         return inMemoryFilmStorage.getFilm(filmId);
     }
 
-    public void checkFilm(Film film) {
+    private void checkFilm(Film film) {
         if (film == null) {
             throw new ValidationException("film equal null");
         } else if (film.getDescription().length() > 200) {
@@ -86,7 +86,7 @@ public class FilmService {
     }
 
     private void checkFilmFindById(Long id) {
-        if (!inMemoryFilmStorage.idIsPresent(id)) {
+        if (!inMemoryFilmStorage.isFilmExists(id)) {
             throw new NotFoundException("film c id=" + id + " не найден");
         }
     }

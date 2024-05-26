@@ -11,7 +11,7 @@ public interface FilmStorage {
 
     Film addFilm(Film film);
 
-    boolean idIsPresent(Long id);
+    boolean isFilmExists(Long id);
 
     Film getFilm(Long filmId);
 }

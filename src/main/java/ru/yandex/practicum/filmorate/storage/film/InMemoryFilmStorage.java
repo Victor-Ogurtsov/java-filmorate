@@ -29,7 +29,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return ++currentMaxId;
     }
 
-    public boolean idIsPresent(Long id) {
+    public boolean isFilmExists(Long id) {
         return films.containsKey(id);
     }
 
