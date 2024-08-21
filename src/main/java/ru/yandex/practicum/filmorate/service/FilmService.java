@@ -19,19 +19,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    private final FilmStorage inMemoryFilmStorage;
+    private final FilmStorage filmStorage;
     private final UserService userService;
 
     public Collection<Film> getAllFilms() {
         log.info("Возврат списка фильмов");
-        return inMemoryFilmStorage.getAllFilms();
+        return filmStorage.getAllFilms();
     }
 
     public Film addFilm(Film film) {
         checkFilm(film);
-        film.setId(inMemoryFilmStorage.getNextId());
+        film.setId(filmStorage.getNextId());
         log.info("Добавлен фильм с id={}", film.getId());
-        return inMemoryFilmStorage.addFilm(film);
+        return filmStorage.addFilm(film);
     }
 
     public Film updateFilm(Film film) {
@@ -41,13 +41,13 @@ public class FilmService {
         }
         checkFilmFindById(film.getId());
         log.info("Изменен фильм с id={}", film.getId());
-        return inMemoryFilmStorage.addFilm(film);
+        return filmStorage.addFilm(film);
     }
 
     public Film getFilm(Long filmId) {
         log.info("Возврат фильма с id={}", filmId);
-        checkFilmFindById(filmId);
-        return inMemoryFilmStorage.getFilm(filmId);
+        //checkFilmFindById(filmId);
+        return filmStorage.getFilm(filmId);
     }
 
     private void checkFilm(Film film) {
@@ -66,27 +66,27 @@ public class FilmService {
     public void likeIt(Long id, Long userId) {
         checkFilmFindById(id);
         userService.checkUserFindById(userId);
-        inMemoryFilmStorage.getFilm(id).getIdsUsersWhoLiked().add(userId);
+        filmStorage.getFilm(id).getIdsUsersWhoLiked().add(userId);
         log.info("Фильм с id = {} получил лайк от пользователя с id = {}", id, userId);
     }
 
     public void deleteLike(Long id, Long userId) {
         checkFilmFindById(id);
         userService.checkUserFindById(userId);
-        inMemoryFilmStorage.getFilm(id).getIdsUsersWhoLiked().remove(userId);
+        filmStorage.getFilm(id).getIdsUsersWhoLiked().remove(userId);
         log.info("У фильма с id = {}  удален лайк от пользователя с id = {}", id, userId);
     }
 
     public Collection<Film> getTopFilms(Long count) {
         log.info("Возврат списка топ фильмов ограниченного по количеству count = {}", count);
-        return inMemoryFilmStorage.getAllFilms().stream()
+        return filmStorage.getAllFilms().stream()
                 .sorted(new FilmComparator().reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
     private void checkFilmFindById(Long id) {
-        if (!inMemoryFilmStorage.isFilmExists(id)) {
+        if (!filmStorage.isFilmExists(id)) {
             throw new NotFoundException("film c id=" + id + " не найден");
         }
     }
