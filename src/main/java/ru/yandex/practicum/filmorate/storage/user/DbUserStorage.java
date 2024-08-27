@@ -14,7 +14,7 @@ import java.util.Collection;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class DbUserStorage implements UserStorage{
+public class DbUserStorage implements UserStorage {
     private final JdbcTemplate jdbc;
     private final UsersResultSetExtractor usersResultSetExtractor;
     private final UserResultSetExtractor userResultSetExtractor;

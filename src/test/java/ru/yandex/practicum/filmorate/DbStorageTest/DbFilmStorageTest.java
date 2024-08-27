@@ -14,10 +14,9 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.film.DbFilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.film.FilmsResultSetExtractor;
-//, JdbcTemplate.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.clas
 
 @JdbcTest
-@Import(DbFilmStorage.class)
+@Import({DbFilmStorage.class, JdbcTemplate.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.class})
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DisplayName("DbFilmStorage")
@@ -46,16 +45,3 @@ public class DbFilmStorageTest {
         Assertions.assertThat(film).usingRecursiveComparison().ignoringActualNullFields().isEqualTo(getTestFilm());
     }
 }
-
-/*public class Film {
-    private Long id;
-    @NotBlank
-    private String name;
-    private String description;
-    private String releaseDate;
-    @Positive
-    private Integer duration;
-    private Set<Long> idsUsersWhoLiked;
-    private MPA mpa;
-    private LinkedHashSet<Genre> genres;
-}*/

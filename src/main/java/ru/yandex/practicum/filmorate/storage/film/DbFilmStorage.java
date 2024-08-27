@@ -14,7 +14,7 @@ import java.util.Collection;
 @Repository
 @Primary
 @RequiredArgsConstructor
-public class DbFilmStorage implements FilmStorage{
+public class DbFilmStorage implements FilmStorage {
     private final JdbcTemplate jdbc;
     private final FilmResultSetExtractor filmResultSetExtractor;
     private final FilmsResultSetExtractor filmsResultSetExtractor;
