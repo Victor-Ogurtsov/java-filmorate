@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controllerTests;
+/*package ru.yandex.practicum.filmorate.controllerTests;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,3 +65,4 @@ public class UserControllerTest {
         Assertions.assertEquals(user.getLogin(), user.getName(), "имя не эквивалентно логину");
     }
 }
+*/

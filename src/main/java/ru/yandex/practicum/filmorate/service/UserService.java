@@ -3,34 +3,35 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NoContentException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.friends.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserStorage inMemoryUserStorage;
+    private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
     public Collection<User> getAllUsers() {
         log.info("Возврат списка пользователей на эндпоинт GET /users");
-        return inMemoryUserStorage.getAllUsers();
+        return userStorage.getAllUsers();
     }
 
     public User addUser(User user) {
         checkUser(user);
-        user.setId(inMemoryUserStorage.getNextId());
+        User addedUser = userStorage.addUser(user);
         log.info("Добавлен пользователь с id={}", user.getId());
-        return inMemoryUserStorage.addUser(user);
+        return addedUser;
     }
 
     public User updateUser(User user) {
@@ -40,13 +41,13 @@ public class UserService {
         }
         checkUserFindById(user.getId());
         log.info("Изменен пользователь с id={}", user.getId());
-        return inMemoryUserStorage.addUser(user);
+        return userStorage.updateUser(user);
     }
 
     public User getUser(Long userId) {
-        checkUserFindById(userId);
+        //checkUserFindById(userId);
         log.info("Возврат пользователя с id={}", userId);
-        return inMemoryUserStorage.getUser(userId);
+        return userStorage.getUser(userId);
     }
 
     private void checkUser(User user) {
@@ -66,41 +67,38 @@ public class UserService {
     public void addFriend(Long id, Long friendId) {
         checkUserFindById(id);
         checkUserFindById(friendId);
-        inMemoryUserStorage.getUser(id).getFriends().add(friendId);
-        inMemoryUserStorage.getUser(friendId).getFriends().add(id);
-        log.info("Пользователи с id {} и {} добавлены в друзья", id, friendId);
+        log.info("Пользователь с id {} добавился в друзья пользователю с id {}", friendId, id);
+        friendsStorage.addFriend(id, friendId);
     }
 
     public void deleteFriend(Long id, Long friendId) {
         checkUserFindById(id);
         checkUserFindById(friendId);
-        inMemoryUserStorage.getUser(id).getFriends().remove(friendId);
-        inMemoryUserStorage.getUser(friendId).getFriends().remove(id);
-        log.info("Пользователи с id {} и {} больше не друзья", id, friendId);
+        if (!friendsStorage.getFriends(id).contains(friendId)) {
+            throw new NoContentException("Пользователя с id = " + friendId + " нет в друзьях у пользователя с id " + id);
+        }
+        log.info("Пользователь с id = {} больше не друг пользователю с id = {}", id, friendId);
+        friendsStorage.deleteFriend(id, friendId);
     }
 
     public Collection<User> getFriends(Long id) {
         checkUserFindById(id);
-        Set<Long> idsFriends = inMemoryUserStorage.getUser(id).getFriends();
+        Collection<Long> idsFriends = friendsStorage.getFriends(id);
         log.info("Возврат списка друзей пользователя с id = {}", id);
-        return inMemoryUserStorage.getAllUsers()
-                .stream()
-                .filter(user -> idsFriends.contains(user.getId()))
-                .collect(Collectors.toList());
+        return idsFriends.stream().map(id1 -> userStorage.getUser(id1)).toList();
     }
 
     public Collection<User> getMutualFriends(Long id, Long otherId) {
         checkUserFindById(id);
         checkUserFindById(otherId);
         log.info("Возврат списка общих друзей пользователей с id {} и {}", id, otherId);
-        return inMemoryUserStorage.getAllUsers().stream()
-                .filter(user -> inMemoryUserStorage.getUser(id).getFriends().contains(user.getId()))
-                .filter(user -> inMemoryUserStorage.getUser(otherId).getFriends().contains(user.getId()))
-                .collect(Collectors.toList());
+        return friendsStorage.getFriends(id).stream()
+                .filter(id1 -> friendsStorage.getFriends(otherId).contains(id1))
+                .map(id1 -> userStorage.getUser(id1)).toList();
     }
 
     protected void checkUserFindById(Long id) {
-        if (!inMemoryUserStorage.idIsPresent(id)) {
+        if (userStorage.getUser(id) == null) {
             throw new NotFoundException("Пользователь c id=" + id + " не найден");
         }
     }

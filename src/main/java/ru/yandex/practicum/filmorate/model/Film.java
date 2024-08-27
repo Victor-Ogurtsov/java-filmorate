@@ -6,11 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * Film.
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +21,6 @@ public class Film {
     @Positive
     private Integer duration;
     private Set<Long> idsUsersWhoLiked;
-    private Set<Long> genre;
-    private String rating;
+    private MPA mpa;
+    private LinkedHashSet<Genre> genres;
 }

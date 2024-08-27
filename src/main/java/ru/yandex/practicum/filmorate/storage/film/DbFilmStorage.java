@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -11,23 +10,24 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.List;
 
 @Repository
 @Primary
 @RequiredArgsConstructor
 public class DbFilmStorage implements FilmStorage{
     private final JdbcTemplate jdbc;
-    private final FilmRowMapper mapper;
+    private final FilmResultSetExtractor filmResultSetExtractor;
+    private final FilmsResultSetExtractor filmsResultSetExtractor;
 
     @Override
     public Collection<Film> getAllFilms() {
-        return jdbc.query("SELECT * FROM FILMS", mapper);
-    }
-
-    @Override
-    public long getNextId() {
-        return 0;
+        String sql = "SELECT f.ID, f.FILM_NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION, f.MPA, m.MPA_NAME, fg.GENRE_ID, gn.GENRE_NAME, l.USER_ID \n" +
+                "FROM FILMS f\n" +
+                "LEFT JOIN FILMS_GENRES fg ON f.ID = fg.FILM_ID \n" +
+                "LEFT JOIN GENRE_NAMES gn ON gn.ID = fg.GENRE_ID \n" +
+                "LEFT JOIN MPA m ON f.MPA = m.ID\n" +
+                "LEFT JOIN LIKES l ON f.ID = l.FILM_ID";
+        return jdbc.query(sql, filmsResultSetExtractor);
     }
 
     @Override
@@ -35,28 +35,36 @@ public class DbFilmStorage implements FilmStorage{
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbc.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO films (\"NAME\", DESCRIPTION, RELEASEDATE, DURATION) VALUES (?, ?, ?, ?)",
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO FILMS (FILM_NAME, DESCRIPTION, RELEASEDATE," +
+                            " DURATION, MPA) VALUES (?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             ps.setObject(1, film.getName());
             ps.setObject(2, film.getDescription());
             ps.setObject(3, film.getReleaseDate());
             ps.setObject(4, film.getDuration());
+            ps.setObject(5, film.getMpa().getId());
 
             return ps;
         }, keyHolder);
 
-        film.setId(keyHolder.getKeyAs(Long.class));
-        return film;
+        return getFilm(keyHolder.getKeyAs(Long.class));
     }
 
-    @Override
-    public boolean isFilmExists(Long id) {
-        return false;
+    public Film updateFilm(Film film) {
+        String sql = "UPDATE FILMS SET FILM_NAME = ?, DESCRIPTION = ?, RELEASEDATE = ?, DURATION = ?, MPA = ? WHERE ID = ?";
+        jdbc.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
+        return getFilm(film.getId());
     }
 
     @Override
     public Film getFilm(Long filmId) {
-
-        return jdbc.queryForObject("SELECT * FROM FILMS WHERE ID = ?", mapper, filmId);
+        String sql = "SELECT f.ID, f.FILM_NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION, f.MPA, m.MPA_NAME, fg.GENRE_ID, gn.GENRE_NAME, l.USER_ID \n" +
+                "FROM FILMS f\n" +
+                "LEFT JOIN FILMS_GENRES fg ON f.ID = fg.FILM_ID \n" +
+                "LEFT JOIN GENRE_NAMES gn ON gn.ID = fg.GENRE_ID \n" +
+                "LEFT JOIN MPA m ON f.MPA = m.ID\n" +
+                "LEFT JOIN LIKES l ON f.ID = l.FILM_ID\n" +
+                "WHERE f.ID = ?";
+        return jdbc.query(sql, filmResultSetExtractor, filmId);
     }
 }
