@@ -20,7 +20,7 @@ public class FilmsResultSetExtractor implements ResultSetExtractor<Collection<Fi
 
         while (rs.next()) {
             Long id = rs.getLong("ID");
-            Long idUserPutLike =rs.getLong("USER_ID");
+            Long idUserPutLike = rs.getLong("USER_ID");
             Integer genreId = rs.getInt("GENRE_ID");
 
             if (films.get(id) == null) {

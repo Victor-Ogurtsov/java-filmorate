@@ -19,7 +19,7 @@ public class FilmResultSetExtractor implements ResultSetExtractor<Film> {
     public Film extractData(ResultSet rs) throws SQLException, DataAccessException {
         Film film = null;
         while (rs.next()) {
-            Long idUserPutLike =rs.getLong("USER_ID");
+            Long idUserPutLike = rs.getLong("USER_ID");
             Integer genreId = rs.getInt("GENRE_ID");
 
             if (film == null) {
