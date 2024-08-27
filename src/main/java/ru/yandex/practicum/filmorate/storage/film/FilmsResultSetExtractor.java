@@ -47,7 +47,7 @@ public class FilmsResultSetExtractor implements ResultSetExtractor<Collection<Fi
                 }
                 films.put(id, film);
             } else {
-                if (genreId > 0 ) {
+                if (genreId > 0) {
                     Genre nextGenre = new Genre();
                     nextGenre.setId(genreId);
                     nextGenre.setName(rs.getString("GENRE_NAME"));
