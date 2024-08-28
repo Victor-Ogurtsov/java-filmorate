@@ -17,7 +17,7 @@ import java.util.Collection;
 public class DbFilmStorage implements FilmStorage {
     private final JdbcTemplate jdbc;
     private final FilmResultSetExtractor filmResultSetExtractor;
-    private final FilmsResultSetExtractor filmsResultSetExtractor;
+    private final CollectionFilmsResultSetExtractor collectionFilmsResultSetExtractor;
 
     @Override
     public Collection<Film> getAllFilms() {
@@ -27,7 +27,7 @@ public class DbFilmStorage implements FilmStorage {
                 "LEFT JOIN GENRE_NAMES gn ON gn.ID = fg.GENRE_ID \n" +
                 "LEFT JOIN MPA m ON f.MPA = m.ID\n" +
                 "LEFT JOIN LIKES l ON f.ID = l.FILM_ID";
-        return jdbc.query(sql, filmsResultSetExtractor);
+        return jdbc.query(sql, collectionFilmsResultSetExtractor);
     }
 
     @Override

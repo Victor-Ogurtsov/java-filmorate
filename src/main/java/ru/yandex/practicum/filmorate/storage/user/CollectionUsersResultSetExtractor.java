@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 @Component
-public class UsersResultSetExtractor implements ResultSetExtractor<Collection<User>> {
+public class CollectionUsersResultSetExtractor implements ResultSetExtractor<Collection<User>> {
     @Override
     public Collection<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
         HashMap<Long, User> users = new HashMap<>();

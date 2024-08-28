@@ -8,7 +8,7 @@ import java.util.Collection;
 
 @Repository
 @RequiredArgsConstructor
-public class FriendsStorage {
+public class DbFriendsStorage {
     private final JdbcTemplate jdbc;
 
     public void addFriend(Long id, Long friendId) {

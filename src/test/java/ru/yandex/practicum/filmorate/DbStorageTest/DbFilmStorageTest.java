@@ -10,15 +10,16 @@ import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.storage.film.CollectionFilmsResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.film.DbFilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmResultSetExtractor;
-import ru.yandex.practicum.filmorate.storage.film.FilmsResultSetExtractor;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 @JdbcTest
-@Import({DbFilmStorage.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.class})
+@Import({DbFilmStorage.class, FilmResultSetExtractor.class, CollectionFilmsResultSetExtractor.class})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DisplayName("DbFilmStorage")
 public class DbFilmStorageTest {
@@ -45,10 +46,39 @@ public class DbFilmStorageTest {
     }
 
     @Test
-    @DisplayName("Должен находить пользователя по id")
+    @DisplayName("Должен находить фильм по id")
     public void should_return_film_when_find_by_id() {
         Film film = dbFilmStorage.getFilm(TEST_FILM_ID);
 
         Assertions.assertThat(film).usingRecursiveComparison().ignoringActualNullFields().isEqualTo(getTestFilm());
+    }
+
+    @Test
+    @DisplayName("Должен возвращать список фильмов добавленных из test-data.sql")
+    public void should_return_film_list() {
+        Collection<Film> films = dbFilmStorage.getAllFilms();
+
+        Assertions.assertThat(films.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("Должен добавить фильм в базу и получить его по id")
+    public void should_return_added_film() {
+        Film addedFilm = dbFilmStorage.addFilm(getTestFilm());
+
+        Assertions.assertThat(addedFilm).usingRecursiveComparison().ignoringActualNullFields()
+                .isEqualTo(dbFilmStorage.getFilm(addedFilm.getId()));
+    }
+
+    @Test
+    @DisplayName("Должен добавить, обновить и вернуть обновленный фильм по id")
+    public void should_return_updated_film() {
+        Film addedFilm = dbFilmStorage.addFilm(getTestFilm());
+        Film updatedFilm = dbFilmStorage.updateFilm(addedFilm);
+
+        Assertions.assertThat(dbFilmStorage.getFilm(addedFilm.getId()))
+                .usingRecursiveComparison()
+                .ignoringActualNullFields()
+                .isEqualTo(updatedFilm);
     }
 }

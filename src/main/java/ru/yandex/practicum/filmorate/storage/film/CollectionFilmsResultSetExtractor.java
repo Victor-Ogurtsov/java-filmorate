@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component
-public class FilmsResultSetExtractor implements ResultSetExtractor<Collection<Film>> {
+public class CollectionFilmsResultSetExtractor implements ResultSetExtractor<Collection<Film>> {
 
     @Override
     public Collection<Film> extractData(ResultSet rs) throws SQLException, DataAccessException {

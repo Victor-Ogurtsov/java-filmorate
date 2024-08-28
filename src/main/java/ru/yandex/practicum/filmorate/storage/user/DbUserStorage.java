@@ -16,7 +16,7 @@ import java.util.Collection;
 @Primary
 public class DbUserStorage implements UserStorage {
     private final JdbcTemplate jdbc;
-    private final UsersResultSetExtractor usersResultSetExtractor;
+    private final CollectionUsersResultSetExtractor collectionUsersResultSetExtractor;
     private final UserResultSetExtractor userResultSetExtractor;
 
     @Override
@@ -24,7 +24,7 @@ public class DbUserStorage implements UserStorage {
         String sql = "SELECT u.ID, u.EMAIL, u.LOGIN, u.USER_NAME, u.BIRTHDAY, f.FRIEND_ID \n" +
                 "FROM USERS u \n" +
                 "LEFT JOIN FRIENDS f ON u.ID = f.USER_ID";
-        return jdbc.query(sql, usersResultSetExtractor);
+        return jdbc.query(sql, collectionUsersResultSetExtractor);
     }
 
     @Override
