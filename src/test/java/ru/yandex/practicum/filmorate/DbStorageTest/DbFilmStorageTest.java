@@ -15,8 +15,10 @@ import ru.yandex.practicum.filmorate.storage.film.DbFilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.film.FilmsResultSetExtractor;
 
+import javax.sql.DataSource;
+
 @JdbcTest
-@Import({DbFilmStorage.class, JdbcTemplate.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.class})
+@Import({DbFilmStorage.class, JdbcTemplate.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.class, DataSource.class })
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DisplayName("DbFilmStorage")
