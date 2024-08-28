@@ -5,21 +5,20 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.film.DbFilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.film.FilmsResultSetExtractor;
 
-import javax.sql.DataSource;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 @JdbcTest
-@Import({DbFilmStorage.class, JdbcTemplate.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.class, DataSource.class })
-@AutoConfigureTestDatabase
+@Import({DbFilmStorage.class, FilmResultSetExtractor.class, FilmsResultSetExtractor.class})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DisplayName("DbFilmStorage")
 public class DbFilmStorageTest {
@@ -35,7 +34,13 @@ public class DbFilmStorageTest {
         film.setDuration(130);
         MPA mpa = new MPA();
         mpa.setId(2);
-        film.setMpa(new MPA());
+        mpa.setName("PG");
+        film.setMpa(mpa);
+        film.setGenres(new LinkedHashSet<>());
+        Genre genre = new Genre(3, "Мультфильм");
+        film.getGenres().add(genre);
+        film.setIdsUsersWhoLiked(new HashSet<>());
+        film.getIdsUsersWhoLiked().add(1L);
         return film;
     }
 

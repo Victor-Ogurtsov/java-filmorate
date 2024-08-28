@@ -21,6 +21,7 @@ public class FilmResultSetExtractor implements ResultSetExtractor<Film> {
         while (rs.next()) {
             Long idUserPutLike = rs.getLong("USER_ID");
             Integer genreId = rs.getInt("GENRE_ID");
+            Integer mpaId = rs.getInt("MPA");
 
             if (film == null) {
                 film = new Film();
@@ -29,10 +30,12 @@ public class FilmResultSetExtractor implements ResultSetExtractor<Film> {
                 film.setDescription(rs.getString("DESCRIPTION"));
                 film.setReleaseDate(rs.getString("RELEASEDATE"));
                 film.setDuration(rs.getInt("DURATION"));
-                MPA mpa = new MPA();
-                mpa.setId(rs.getInt("MPA"));
-                mpa.setName(rs.getString("MPA_NAME"));
-                film.setMpa(mpa);
+                if (mpaId > 0) {
+                    MPA mpa = new MPA();
+                    mpa.setId(mpaId);
+                    mpa.setName(rs.getString("MPA_NAME"));
+                    film.setMpa(mpa);
+                }
                 film.setIdsUsersWhoLiked(new HashSet<>());
                 if (idUserPutLike > 0) {
                     film.getIdsUsersWhoLiked().add(idUserPutLike);
