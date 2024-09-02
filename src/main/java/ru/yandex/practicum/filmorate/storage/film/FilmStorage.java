@@ -7,11 +7,9 @@ import java.util.Collection;
 public interface FilmStorage {
     Collection<Film> getAllFilms();
 
-    long getNextId();
-
     Film addFilm(Film film);
 
-    boolean isFilmExists(Long id);
-
     Film getFilm(Long filmId);
+
+    Film updateFilm(Film film);
 }

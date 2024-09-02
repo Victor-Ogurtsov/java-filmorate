@@ -9,31 +9,41 @@ Template repository for Filmorate project.
 
 Запрос на получение списка фильмов со всеми данными
 ``` sql
-SELECT *
-FROM films;
+SELECT f.ID, f.FILM_NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION, f.MPA, m.MPA_NAME, fg.GENRE_ID, gn.GENRE_NAME, l.USER_ID 
+FROM FILMS f
+LEFT JOIN FILMS_GENRES fg ON f.ID = fg.FILM_ID 
+LEFT JOIN GENRE_NAMES gn ON gn.ID = fg.GENRE_ID 
+LEFT JOIN MPA m ON f.MPA = m.ID
+LEFT JOIN LIKES l ON f.ID = l.FILM_ID;
 ```
 <br>
 
 Запрос на добавление фильма
 ``` sql
-INSERT INTO films (name, description, release_date, duration, rating_id) 
-VALUES('Название', 'Описание ', '2014-09-06', 65, 3);
+INSERT INTO FILMS (FILM_NAME, DESCRIPTION, RELEASEDATE DURATION, MPA) VALUES ('Название', 'Описание ', '2014-09-06', 65, 3);
 ```
 <br>
 
 Запрос на обновление информации 
 ```sql
-UPDATE films
-SET name = 'Новое название'
-WHERE id = 1;
+UPDATE FILMS SET FILM_NAME = 'Новое название',
+DESCRIPTION = 'Новое описание',
+RELEASEDATE = '2000-10-11',
+DURATION = 130,
+MPA = 2 
+WHERE ID = 2;
 ```
 <br>
 
 Запрос фильма по id
 ``` sql
-SELECT name
-FROM films 
-WHERE id = 2;
+SELECT f.ID, f.FILM_NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION, f.MPA, m.MPA_NAME, fg.GENRE_ID, gn.GENRE_NAME, l.USER_ID 
+FROM FILMS f
+LEFT JOIN FILMS_GENRES fg ON f.ID = fg.FILM_ID 
+LEFT JOIN GENRE_NAMES gn ON gn.ID = fg.GENRE_ID 
+LEFT JOIN MPA m ON f.MPA = m.ID
+LEFT JOIN LIKES l ON f.ID = l.FILM_ID
+WHERE f.ID = 2;
 ```
 <br>
 
@@ -41,112 +51,51 @@ WHERE id = 2;
 
 Запрос названия рейтинга фильма по id фильма
 ``` sql
-SELECT name
-FROM ratings 
-WHERE id = (
-    SELECT rating_id
-    FROM films
-    WHERE id = 1);
+SELECT ID, MPA_NAME FROM MPA WHERE ID = 3;
 ```
 <br>
 
 #### Таблица <u>genre_names</u> содержит названия жанров фильмов. PK - id.
 #### Таблица <u>films_genres</u> содержит соответствия идентификаторов фильмов и идентификаторов жанров. PK - (film_id, genre_id);  FK - film_id; FK - genre_id;
 
-Запрос списка фильмов в жанре 'Комедия'
+Запрос жанра фильма по id
 ``` sql
-SELECT *
-FROM films 
-WHERE id IN (
-    SELECT film_id
-    FROM films_genres fg 
-    JOIN genre_names gn ON fg.genre_id = gn.id
-    WHERE gn.name = 'Комедия' 
-);
+SELECT * FROM GENRE_NAMES WHERE ID = 5;
 ```
 <br>
-
 
 #### Таблица <u>users</u> содержит информацию о пользователях. PK - (id).
 
 Запрос на получение списка пользователей со всеми данными
 ``` sql
-SELECT *
-FROM users;
+SELECT u.ID, u.EMAIL, u.LOGIN, u.USER_NAME, u.BIRTHDAY, f.FRIEND_ID 
+FROM USERS u 
+LEFT JOIN FRIENDS f ON u.ID = f.USER_ID;
 ```
 <br>
 
 Запрос на добавление пользователя
 ``` sql
-INSERT INTO users (email, login, name, birthday) 
+INSERT INTO USERS (EMAIL, LOGIN, USER_NAME, BIRTHDAY) 
 VALUES('nikol@mail.ru', 'nikola', 'Николай', '1996-03-07');
 ```
 <br>
 
 Запрос на обновление информации
 ```sql
-UPDATE users
-SET name = 'Новое имя'
-WHERE id = 1;
-```
-<br>
-
-Запрос почты пользователя по id
-``` sql
-SELECT email
-FROM users 
-WHERE id = 2;
+UPDATE USERS SET EMAIL = 'gjxn@sdfs',
+LOGIN = 'login',
+USER_NAME = 'Новое имя',
+BIRTHDAY = '1995-08-04'
+WHERE ID = 1;
 ```
 <br>
 
 #### Таблица <u>likes</u> содержит соответствия идентификаторов фильмов и идентификаторов пользователей. PK - (film_id, user_id);  FK - film_id; FK - user_id;
-
-Зарос таблицы топ 10 фильмов по количеству лайков с названиями фильмов и количеством лайков
-``` sql
-SELECT f.name AS film_name,
-       count_likes
-FROM (
-   SELECT l.film_id,
-          count(l.user_id) as count_likes
-   FROM likes l
-   GROUP BY l.film_id
-) AS group_likes_by_films
-INNER JOIN films f ON group_likes_by_films.film_id = f.id
-ORDER BY count_likes DESC
-LIMIT 10;
-```
-<br>
-
 #### Таблица <u>friends</u> содержит соответствия идентификаторов пользователя и его друга. PK - (user_id, friend_id);  FK - user_id; FK - friend_id; Поле friendship_confirmed содержит значение 'yes', если у обоих пользователей присутствуют записи с их идентификатором в колонке friend_id, в противном случае 'no'.
 
-Запрос на добавление одним пользователем (id=1) себе в друзья другого пользователя (id=2).
+Запрос на добавление одним пользователем себе в друзья другого пользователя
 ``` sql
-IF EXISTS (
-    SELECT *
-    FROM friends
-    WHERE user_id = 2 AND friend_id = 1
-) BEGIN 
-
-INSERT INTO friends (user_id, friend_id, friendship_confirmed)
-VALUES(1, 2, 'yes');
-UPDATE friends
-SET friendship_confirmed = 'yes'
-WHERE user_id = 2 AND friend_id = 1
-
-END ELSE BEGIN
-INSERT INTO friends (user_id, friend_id, friendship_confirmed)
-VALUES(1, 2, 'no')
-```
-<br>
-
-Запрос списка подтвержденных пользователей, которые являются друзями пользователя с id=1
-``` sql
-SELECT *
-FROM users 
-WHERE id IN (
-    SELECT friend_id
-    FROM friends
-    WHERE user_id = 1 AND friendship_confirmed = 'yes'
-);
+INSERT INTO FRIENDS (USER_ID, FRIEND_ID) VALUES (1, 2);
 ```
 <br>
